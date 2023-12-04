@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../entities/club.dart';
 import '../entities/club_team.dart';
+import '../entities/club_user.dart';
+import '../entities/club_levels.dart';
 
 const _names = ['App Development', 'Web Development', 'Cyber Security'];
 const _description =
@@ -29,8 +31,17 @@ final clubsProvider = Provider<List<Club>>(
         coverImgUrl: _coverImages[i % 3],
         membersCount: random.nextInt(50) + 10,
         team: ClubTeam(
-          leadUid: 'leadUserId-$i',
-          coleadUids: List.generate(random.nextInt(3), (j) => '$i-coleadUserId-$j'),
+          lead: ClubUser(
+            userId: 'leadUserId-$i',
+            level: ClubLevels.lead,
+          ),
+          coleads: List.generate(
+            random.nextInt(3),
+            (j) => ClubUser(
+              userId: '$i-coleadUserId-$j',
+              level: ClubLevels.colead,
+            ),
+          ),
         ),
         closed: random.nextBool(),
         createdAt: now,

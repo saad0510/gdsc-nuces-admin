@@ -17,3 +17,14 @@ final getUserProvider = FutureProvider.autoDispose.family<UserData, String>(
     );
   },
 );
+
+final getAllUsersProvider = FutureProvider.autoDispose<List<UserData>>(
+  (ref) async {
+    return Future.wait(
+      List.generate(
+        10,
+        (i) => ref.read(getUserProvider('$i').future),
+      ),
+    );
+  },
+);

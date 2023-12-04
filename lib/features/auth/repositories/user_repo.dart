@@ -33,6 +33,12 @@ class UserRepo {
     return data;
   }
 
+  Future<List<UserData>> getAllUsers() async {
+    final snap = await userCollection.get();
+    final users = snap.docs.map((user) => user.data());
+    return users.toList();
+  }
+
   Future<List<UserData>> getUsers(List<String> uids) async {
     return Future.wait(uids.map(getUser));
   }

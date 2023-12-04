@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../app/routes.dart';
 import '../../../app/sizer.dart';
 import '../../../core/extensions/context_ext.dart';
 import '../controllers/clubs_provider.dart';
@@ -27,7 +28,7 @@ class HomeScreen extends ConsumerWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 5,
-              separatorBuilder: (_, i) => AppSizes.normalY,
+              separatorBuilder: (_, i) => AppSizes.smallY,
               itemBuilder: (_, i) {
                 return ClubTile(
                   club: clubs[i],
@@ -39,8 +40,16 @@ class HomeScreen extends ConsumerWidget {
                 );
               },
             ),
+            AppSizes.largeY,
+            AppSizes.largeY,
+            AppSizes.largeY,
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Add Club',
+        onPressed: () => context.push(AppRoutes.addClub),
+        child: const Icon(Icons.add),
       ),
     );
   }
