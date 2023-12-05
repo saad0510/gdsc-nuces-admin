@@ -46,3 +46,19 @@ final clubsProvider = Provider<List<Club>>(
     );
   },
 );
+
+final openedClubsProvider = Provider<List<Club>>(
+  (ref) {
+    final clubs = ref.watch(clubsProvider);
+    final openedClubs = clubs.where((e) => !e.closed);
+    return openedClubs.toList();
+  },
+);
+
+final closedClubsProvider = Provider<List<Club>>(
+  (ref) {
+    final clubs = ref.watch(clubsProvider);
+    final closedClubs = clubs.where((e) => e.closed);
+    return closedClubs.toList();
+  },
+);

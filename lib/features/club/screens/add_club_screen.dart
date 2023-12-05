@@ -44,20 +44,37 @@ class _AddClubScreenState extends ConsumerState<AddClubScreen> {
                 initialUrl: club.coverImgUrl,
                 onChanged: (url) => club = club.copyWith(coverImgUrl: url),
               ),
-              AppSizes.mediumY,
+              AppSizes.normalY,
               AppTextField.name(
                 label: 'Title',
                 hint: 'A nice title or name of the club',
                 initialValue: shouldEdit ? club.title : null,
                 onSubmit: (x) => club = club.copyWith(title: x),
               ),
-              AppSizes.mediumY,
+              AppSizes.normalY,
               AppTextField.name(
                 label: 'Description',
                 hint: 'Briefly describe the purpose of this club',
                 initialValue: shouldEdit ? club.description : null,
                 maxLines: 2,
                 onSubmit: (x) => club = club.copyWith(title: x),
+              ),
+              AppSizes.normalY,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Closed',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Switch(
+                    value: club.closed,
+                    onChanged: (x) => setState(
+                      () => club = club.copyWith(closed: x),
+                    ),
+                  ),
+                ],
               ),
               AppSizes.normalY,
               Row(

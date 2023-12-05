@@ -4,6 +4,7 @@ import '../../../app/sizer.dart';
 import '../../../app/theme/colors.dart';
 import '../../../core/extensions/context_ext.dart';
 import '../entities/club.dart';
+import '../widgets/banner_widget.dart';
 import '../widgets/club_team_card.dart';
 import '../widgets/club_tile.dart';
 import '../widgets/delete_club_dialog.dart';
@@ -24,7 +25,11 @@ class ClubDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ClubTile(club: club),
+            BannerWidget(
+              message: 'Archived',
+              show: club.closed,
+              child: ClubTile(club: club),
+            ),
             AppSizes.mediumY,
             Text(club.description),
             AppSizes.mediumY,

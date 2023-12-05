@@ -9,16 +9,18 @@ import '../controllers/clubs_provider.dart';
 import '../widgets/club_tile.dart';
 import '../widgets/home_app_bar.dart';
 import 'club_detail_screen.dart';
+import 'home_drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final clubs = ref.watch(clubsProvider);
+    final clubs = ref.watch(openedClubsProvider);
 
     return Scaffold(
       appBar: const HomeAppBar(),
+      endDrawer: const HomeDrawer(),
       body: SingleChildScrollView(
         padding: AppPaddings.normal,
         child: Column(

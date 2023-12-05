@@ -30,7 +30,9 @@ class HomeAppBar extends StatelessWidget with PreferredSizeWidget {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
               icon: const Icon(Icons.menu),
             ),
           ],
