@@ -1,5 +1,6 @@
 import '../../../app/constants.dart';
 import 'club_team.dart';
+import 'club_user.dart';
 
 class Club {
   final String id;
@@ -29,7 +30,7 @@ class Club {
         coverImgUrl = AppConstants.coverImages.first,
         membersCount = 0,
         team = const ClubTeam.empty(),
-        closed = true,
+        closed = false,
         createdAt = DateTime.now();
 
   Club copyWith({
@@ -51,6 +52,38 @@ class Club {
       team: team ?? this.team,
       closed: closed ?? this.closed,
       createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'description': description,
+      'image': coverImgUrl,
+      'members': membersCount,
+      'team': team.allUsers.map((e) => e.toMap()).toList(),
+      'closed': closed,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+    };
+  }
+
+  factory Club.fromMap(dynamic data) {
+    final map = Map<String, dynamic>.from(data);
+
+    return Club(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      coverImgUrl: map['image'],
+      membersCount: map['members'],
+      team: ClubTeam.fromUsers(
+        List.from(
+          map['team'].map(ClubUser.fromMap),
+        ),
+      ),
+      closed: map['closed'],
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
     );
   }
 }

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/sizer.dart';
+import '../../../app/theme/colors.dart';
 import '../../../core/extensions/context_ext.dart';
 import '../../auth/widgets/app_text_field.dart';
 import '../../auth/widgets/user_tile.dart';
 import '../entities/club.dart';
 import '../entities/club_levels.dart';
 import '../entities/club_user.dart';
+import '../repositories/club_repo.dart';
 import '../widgets/background_picker.dart';
 import '../widgets/label_tag.dart';
 import 'club_user_picker_screen.dart';
@@ -57,7 +59,7 @@ class _AddClubScreenState extends ConsumerState<AddClubScreen> {
                 hint: 'Briefly describe the purpose of this club',
                 initialValue: shouldEdit ? club.description : null,
                 maxLines: 2,
-                onSubmit: (x) => club = club.copyWith(title: x),
+                onSubmit: (x) => club = club.copyWith(description: x),
               ),
               AppSizes.normalY,
               Row(
@@ -118,6 +120,7 @@ class _AddClubScreenState extends ConsumerState<AddClubScreen> {
         padding: AppPaddings.normal,
         child: ElevatedButton(
           onPressed: save,
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.green),
           child: shouldEdit ? const Text('Save') : const Text('Create'),
         ),
       ),
@@ -155,6 +158,14 @@ class _AddClubScreenState extends ConsumerState<AddClubScreen> {
       context.showError('A club should have atleast one team lead');
       return;
     }
-    context.pop();
+
+    final repo = ref.read(clubRepoProvider);
+    context.showLoadingUntil(
+      shouldEdit ? repo.updateClub(club) : repo.addClub(club),
+      then: (_) {
+        if (shouldEdit) context.pop();
+        context.pop();
+      },
+    );
   }
 }

@@ -5,6 +5,7 @@ import '../../../app/sizer.dart';
 import '../../../app/theme/colors.dart';
 import '../../../core/extensions/context_ext.dart';
 import '../entities/club.dart';
+import '../repositories/club_repo.dart';
 
 class DeleteClubForm extends ConsumerWidget {
   const DeleteClubForm({
@@ -35,7 +36,13 @@ class DeleteClubForm extends ConsumerWidget {
       children: [
         ElevatedButton(
           onPressed: () {
-            context.pop();
+            context.showLoadingUntil(
+              ref.read(clubRepoProvider).deleteClub(club),
+              then: (_) {
+                context.pop();
+                context.pop();
+              },
+            );
           },
           child: const Text('Delete Forever'),
         ),
