@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/routes.dart';
 import '../../../app/sizer.dart';
+import '../../../app/theme/colors.dart';
 import '../../../core/extensions/context_ext.dart';
 import '../controllers/clubs_provider.dart';
 import '../widgets/club_tile.dart';
@@ -48,6 +49,8 @@ class HomeScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add Club',
+        backgroundColor: AppColors.blue,
+        foregroundColor: Colors.white,
         onPressed: () => context.push(AppRoutes.addClub),
         child: const Icon(Icons.add),
       ),

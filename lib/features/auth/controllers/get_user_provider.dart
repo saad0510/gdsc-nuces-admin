@@ -12,7 +12,7 @@ final getUserProvider = FutureProvider.autoDispose.family<UserData, String>(
     final i = Random().nextInt(10);
     return UserData(
       name: _names[i % 4],
-      email: 'abc@gmail.com',
+      email: '$userId@gmail.com',
       imageUrl: 'https://i.pravatar.cc/300?img=$i',
     );
   },
@@ -23,7 +23,7 @@ final getAllUsersProvider = FutureProvider.autoDispose<List<UserData>>(
     return Future.wait(
       List.generate(
         10,
-        (i) => ref.read(getUserProvider('$i').future),
+        (i) => ref.read(getUserProvider('abc.$i').future),
       ),
     );
   },

@@ -1,3 +1,4 @@
+import '../../../app/constants.dart';
 import 'club_team.dart';
 
 class Club {
@@ -25,7 +26,7 @@ class Club {
       : id = '',
         title = '',
         description = '',
-        coverImgUrl = '',
+        coverImgUrl = AppConstants.coverImages.first,
         membersCount = 0,
         team = const ClubTeam.empty(),
         closed = true,

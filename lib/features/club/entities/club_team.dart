@@ -17,6 +17,8 @@ class ClubTeam {
         ),
         coleads = const [];
 
+  List<ClubUser> get allUsers => [lead, ...coleads];
+
   ClubTeam copyWith({
     ClubUser? lead,
     List<ClubUser>? coleads,

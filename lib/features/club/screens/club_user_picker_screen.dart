@@ -6,17 +6,20 @@ import '../../../core/extensions/context_ext.dart';
 import '../../auth/controllers/get_user_provider.dart';
 import '../../auth/entities/user_data.dart';
 import '../../auth/widgets/user_tile.dart';
-import '../entities/club_user.dart';
 import '../entities/club_levels.dart';
+import '../entities/club_user.dart';
 import '../widgets/info_message.dart';
+import '../widgets/label_tag.dart';
 import '../widgets/value_picker_dialog.dart';
 
 class ClubUserPickerScreen extends ConsumerWidget {
   const ClubUserPickerScreen({
     super.key,
+    this.selected = const [],
     required this.onSelected,
   });
 
+  final List<ClubUser> selected;
   final void Function(ClubUser user) onSelected;
 
   @override
@@ -69,14 +72,21 @@ class ClubUserPickerScreen extends ConsumerWidget {
                 itemCount: users.length,
                 separatorBuilder: (_, i) => AppSizes.smallY,
                 itemBuilder: (_, i) {
+                  final selectedUsers = selected.where((u) => u.userId == users[i].uid);
+
                   return UserTile(
                     user: users[i],
                     onPressed: () {
                       ValuePickerDialog(
-                        values: [...ClubLevels.values]..remove(ClubLevels.member),
+                        values: ClubLevels.values,
                         onPicked: (l) => pick(users[i], l),
                       ).show(context);
                     },
+                    trailing: selectedUsers.isEmpty
+                        ? null
+                        : ClubLevelTag(
+                            selectedUsers.first.level,
+                          ),
                   );
                 },
               ),

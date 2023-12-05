@@ -13,21 +13,24 @@ import '../widgets/label_tag.dart';
 import 'club_user_picker_screen.dart';
 
 class AddClubScreen extends ConsumerStatefulWidget {
-  const AddClubScreen({super.key});
+  const AddClubScreen({super.key, this.club});
+
+  final Club? club;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _JoinClubScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddClubScreenState();
 }
 
-class _JoinClubScreenState extends ConsumerState<AddClubScreen> {
+class _AddClubScreenState extends ConsumerState<AddClubScreen> {
   final formKey = GlobalKey<FormState>();
-  var club = Club.empty();
+  late final shouldEdit = widget.club != null;
+  late var club = widget.club ?? Club.empty();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Club'),
+        title: shouldEdit ? const Text('Edit Club') : const Text('New Club'),
       ),
       body: SingleChildScrollView(
         padding: AppPaddings.normal,
@@ -38,18 +41,21 @@ class _JoinClubScreenState extends ConsumerState<AddClubScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               BackgroundPicker(
+                initialUrl: club.coverImgUrl,
                 onChanged: (url) => club = club.copyWith(coverImgUrl: url),
               ),
               AppSizes.mediumY,
               AppTextField.name(
                 label: 'Title',
                 hint: 'A nice title or name of the club',
+                initialValue: shouldEdit ? club.title : null,
                 onSubmit: (x) => club = club.copyWith(title: x),
               ),
               AppSizes.mediumY,
               AppTextField.name(
                 label: 'Description',
                 hint: 'Briefly describe the purpose of this club',
+                initialValue: shouldEdit ? club.description : null,
                 maxLines: 2,
                 onSubmit: (x) => club = club.copyWith(title: x),
               ),
@@ -64,7 +70,10 @@ class _JoinClubScreenState extends ConsumerState<AddClubScreen> {
                   TextButton(
                     onPressed: () {
                       context.pushTo(
-                        ClubUserPickerScreen(onSelected: addUser),
+                        ClubUserPickerScreen(
+                          selected: club.team.allUsers,
+                          onSelected: addUser,
+                        ),
                       );
                     },
                     child: const Text('Select'),
@@ -92,7 +101,7 @@ class _JoinClubScreenState extends ConsumerState<AddClubScreen> {
         padding: AppPaddings.normal,
         child: ElevatedButton(
           onPressed: save,
-          child: const Text('Create'),
+          child: shouldEdit ? const Text('Save') : const Text('Create'),
         ),
       ),
     );
@@ -100,7 +109,17 @@ class _JoinClubScreenState extends ConsumerState<AddClubScreen> {
 
   void addUser(ClubUser user) {
     var team = club.team;
-    if (user.level == ClubLevels.lead) {
+    if (user.level == ClubLevels.member) {
+      final wasLead = club.team.lead.userId == user.userId;
+      const newLead = ClubUser(userId: '', level: ClubLevels.lead);
+      team = team.copyWith(
+        lead: wasLead ? newLead : null,
+        coleads: [
+          for (final colead in team.coleads) //
+            if (colead.userId != user.userId) colead,
+        ],
+      );
+    } else if (user.level == ClubLevels.lead) {
       team = team.copyWith(lead: user);
     } else if (user.level == ClubLevels.colead) {
       team = team.copyWith(
@@ -119,7 +138,6 @@ class _JoinClubScreenState extends ConsumerState<AddClubScreen> {
       context.showError('A club should have atleast one team lead');
       return;
     }
-
     context.pop();
   }
 }
