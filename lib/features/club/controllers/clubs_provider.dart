@@ -4,7 +4,7 @@ import '../entities/club.dart';
 import '../repositories/club_repo.dart';
 
 final clubsProvider = StreamProvider<List<Club>>(
-  (ref) => ref.read(clubRepoProvider).clubsStream(),
+  (ref) => ref.watch(clubRepoProvider).clubsStream(),
 );
 
 final openedClubsProvider = Provider<AsyncValue<List<Club>>>(

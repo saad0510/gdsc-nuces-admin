@@ -3,26 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/sizer.dart';
 import '../../../core/extensions/context_ext.dart';
-import '../controllers/events_provider.dart';
+import '../entities/event.dart';
 import '../screens/event_detail_screen.dart';
 import 'event_tile.dart';
 import 'info_message.dart';
 
-class EventListView extends ConsumerWidget {
+class EventListView extends StatelessWidget {
   const EventListView({
     super.key,
-    required this.clubId,
+    required this.title,
+    this.showEmpty = true,
+    required this.events,
   });
 
-  final String clubId;
+  final String title;
+  final bool showEmpty;
+  final AsyncValue<List<Event>> events;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final eventsAsync = ref.watch(eventsProvider(clubId));
+  Widget build(BuildContext context) {
+    final eventsAsync = this.events;
 
     if (eventsAsync.isLoading)
       return Text(
-        'Loading Events',
+        'Loading $title',
         style: Theme.of(context).textTheme.titleMedium,
       );
 
@@ -37,11 +41,11 @@ class EventListView extends ConsumerWidget {
 
     final events = eventsAsync.value!;
 
-    if (events.isEmpty)
-      return const Center(
+    if (events.isEmpty && showEmpty)
+      return Center(
         heightFactor: 1.5,
         child: InfoMessage.empty(
-          title: 'No events found',
+          title: 'No $title found',
           description: 'Join the club to get notifications about future events',
         ),
       );
@@ -51,7 +55,7 @@ class EventListView extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          '${events.length} Club Events',
+          '${events.length} $title',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         AppSizes.smallY,
