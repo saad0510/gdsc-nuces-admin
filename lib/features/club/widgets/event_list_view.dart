@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/sizer.dart';
 import '../../../core/extensions/context_ext.dart';
 import '../entities/event.dart';
+import '../repositories/event_repo.dart';
 import '../screens/event_detail_screen.dart';
 import 'event_tile.dart';
 import 'info_message.dart';
+import 'value_picker_dialog.dart';
 
-class EventListView extends StatelessWidget {
+class EventListView extends ConsumerWidget {
   const EventListView({
     super.key,
     required this.title,
@@ -21,7 +23,7 @@ class EventListView extends StatelessWidget {
   final AsyncValue<List<Event>> events;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final eventsAsync = this.events;
 
     if (eventsAsync.isLoading)
@@ -66,12 +68,30 @@ class EventListView extends StatelessWidget {
           itemCount: events.length,
           separatorBuilder: (_, i) => AppSizes.smallY,
           itemBuilder: (_, i) {
+            final event = events[i];
+
             return EventTile(
-              event: events[i],
+              event: event,
               onPressed: () {
-                context.pushTo(
-                  EventDetailScreen(event: events[i]),
-                );
+                if (event.approved) {
+                  context.pushTo(
+                    EventDetailScreen(event: event),
+                  );
+                  return;
+                }
+
+                ValuePickerDialog(
+                  values: const ['Approve', 'Reject'],
+                  onPicked: (x) {
+                    final repo = ref.read(eventRepoProvider);
+                    final future = x == 'Approve'
+                        ? repo.updateEvent(
+                            event.copyWith(approved: true),
+                          )
+                        : repo.deleteEvent(event);
+                    context.showLoadingUntil(future);
+                  },
+                ).show(context);
               },
             );
           },
